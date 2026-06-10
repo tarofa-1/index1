@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>تمكين — TAMKIN Resume Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Tajawal:wght@300;400;500;700&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --green:#1a3d2b; --green-mid:#2a5040; --green-light:#3a6650;
+  --cream:#f0ead8; --cream-mid:#d8ceb4; --white:#faf8f2; --gold:#c9a96e;
+  --bg:#1a3d2b; --surface:rgba(42,80,64,.45);
+  --text:#f0ead8; --text-inv:#1a3d2b; --text-muted:rgba(240,234,216,.58);
+  --border:rgba(240,234,216,.1); --border2:rgba(240,234,216,.06);
+  --nav-bg:rgba(26,61,43,.97);
+  --input-bg:rgba(42,80,64,.4); --input-border:rgba(240,234,216,.15);
+  --port-bg:#f0ead8; --port-text:#1a3d2b; --port-card:#1a3d2b;
+  --port-muted:rgba(26,61,43,.55); --port-border:rgba(26,61,43,.12);
+  --port-mock-line:rgba(26,61,43,.14); --port-mock-thick:rgba(26,61,43,.28);
+}
+[data-theme="light"] {
+  --bg:#f0ead8; --surface:rgba(220,210,190,.55);
+  --text:#1a3d2b; --text-inv:#f0ead8; --text-muted:rgba(26,61,43,.58);
+  --border:rgba(26,61,43,.12); --border2:rgba(26,61,43,.07);
+  --nav-bg:rgba(240,234,216,.97);
+  --input-bg:rgba(26,61,43,.06); --input-border:rgba(26,61,43,.18);
+  --port-bg:#1a3d2b; --port-text:#f0ead8; --port-card:#f0ead8;
+  --port-muted:rgba(240,234,216,.55); --port-border:rgba(240,234,216,.12);
+  --port-mock-line:rgba(240,234,216,.14); --port-mock-thick:rgba(240,234,216,.28);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;transition:background .5s,color .5s;}
+
+/* ─── CURSOR ─── */
+.cursor{position:fixed;width:8px;height:8px;background:var(--text);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .5s;}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1px solid rgba(240,234,216,.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .15s;}
+[data-theme="light"] .cursor-ring{border-color:rgba(26,61,43,.25);}
+
+/* ─── SCROLL REVEAL ─── */
+.sr{opacity:0;transform:translateY(32px);transition:opacity .78s cubic-bezier(.22,1,.36,1),transform .78s cubic-bezier(.22,1,.36,1);}
+.sr.d1{transition-delay:.1s;}.sr.d2{transition-delay:.22s;}.sr.d3{transition-delay:.34s;}
+.sr.visible{opacity:1;transform:none;}
+
+/* ─── NAV ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:16px 56px;display:flex;align-items:center;justify-content:space-between;background:var(--nav-bg);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--border2);transition:background .5s,border-color .5s;}
+.nav-logo{text-decoration:none;display:flex;align-items:center;}
+.nav-logo-ar{font-family:'Amiri',serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:.02em;transition:color .5s;}
+.nav-logo-divider{font-family:'Josefin Sans',sans-serif;font-size:14px;font-weight:200;color:var(--text);opacity:.3;margin:0 10px;transition:color .5s;}
+.nav-logo-en{font-family:'Josefin Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.38em;color:var(--text);opacity:.38;transition:color .5s;}
+.nav-center{display:flex;gap:30px;list-style:none;}
+.nav-center a{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:400;color:var(--text);opacity:.6;text-decoration:none;transition:opacity .3s;}
+.nav-center a:hover{opacity:1;}
+.nav-right{display:flex;align-items:center;gap:13px;}
+.theme-toggle{width:52px;height:28px;border-radius:14px;border:1px solid var(--border);background:var(--surface);position:relative;cursor:none;flex-shrink:0;transition:background .4s,border-color .4s;}
+.toggle-thumb{position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1;transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+[data-theme="dark"] .toggle-thumb{transform:translateX(3px);}
+[data-theme="light"] .toggle-thumb{transform:translateX(27px);}
+.nav-cta{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;color:var(--text-inv);background:var(--text);padding:9px 22px;text-decoration:none;white-space:nowrap;transition:background .3s,color .3s,transform .2s;}
+.nav-cta:hover{background:var(--gold);color:var(--white);transform:translateY(-1px);}
+
+/* ─── HERO ─── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:130px 56px 80px;position:relative;overflow:hidden;text-align:center;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 65% at 50% 110%,rgba(42,80,64,.55) 0%,transparent 65%),radial-gradient(ellipse 50% 50% at 50% -5%,rgba(201,169,110,.06) 0%,transparent 60%);pointer-events:none;}
+.hero-logo-ar{font-family:'Amiri',serif;font-size:clamp(52px,9vw,108px);font-weight:700;line-height:1.15;color:var(--text);letter-spacing:.04em;opacity:0;animation:fadeUp .9s .2s forwards;}
+.hero-sub{font-family:'Tajawal',sans-serif;font-size:clamp(16px,2.2vw,24px);font-weight:400;color:var(--text);opacity:0;margin-top:12px;letter-spacing:.02em;animation:fadeUp .9s .38s forwards;}
+.hero-divider{width:56px;height:1px;background:var(--gold);opacity:0;margin:28px auto;animation:fadeUp .8s .5s forwards;}
+.hero-desc{font-family:'Tajawal',sans-serif;font-size:clamp(14px,1.5vw,17px);font-weight:300;line-height:1.95;color:var(--text-muted);max-width:500px;margin:0 auto 44px;opacity:0;animation:fadeUp .8s .6s forwards;}
+.hero-btn{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:500;color:var(--green);background:var(--cream);padding:16px 50px;text-decoration:none;display:inline-block;position:relative;overflow:hidden;transition:color .4s;border:none;cursor:none;opacity:0;animation:fadeUp .8s .72s forwards;}
+.hero-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateY(101%);transition:transform .45s cubic-bezier(.77,0,.175,1);}
+.hero-btn:hover::before{transform:translateY(0);}
+.hero-btn:hover{color:var(--white);}
+.hero-btn span{position:relative;z-index:1;}
+
+/* ─── MARQUEE ─── */
+.marquee-strip{background:var(--gold);padding:11px 0;overflow:hidden;white-space:nowrap;}
+.marquee-inner{display:inline-flex;animation:marquee 22s linear infinite;}
+.marquee-item{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;letter-spacing:.1em;color:#fff;padding:0 24px;border-left:1px solid rgba(255,255,255,.22);}
+.marquee-item:first-child{border-left:none;}
+
+/* ─── SECTION HELPERS ─── */
+.section-label-center{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:.5em;font-weight:300;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:14px;}
+.section-label-center::before,.section-label-center::after{content:'';width:32px;height:1px;background:var(--gold);opacity:.5;}
+.section-divider{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);}
+
+/* ─── FEATURES ─── */
+.features{padding:110px 56px;text-align:center;}
+.features-title-en{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:.5em;font-weight:300;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:14px;}
+.features-title-en::before,.features-title-en::after{content:'';width:32px;height:1px;background:var(--gold);opacity:.5;}
+.features-heading{font-family:'Amiri',serif;font-size:clamp(28px,4vw,52px);font-weight:700;line-height:1.3;color:var(--text);margin-bottom:56px;}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:1px solid var(--border2);}
+.feature-card{padding:52px 40px 46px;background:var(--bg);position:relative;overflow:hidden;transition:background .4s;text-align:right;}
+.feature-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.77,0,.175,1);}
+.feature-card:hover::after{transform:scaleX(1);}
+.feature-card:hover{background:rgba(42,80,64,.35);}
+[data-theme="light"] .feature-card:hover{background:rgba(220,210,190,.5);}
+.feature-num{font-family:'Josefin Sans',sans-serif;font-size:11px;letter-spacing:.3em;font-weight:300;color:var(--gold);text-transform:uppercase;margin-bottom:22px;display:block;opacity:.8;}
+.feature-ats-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(201,169,110,.35);padding:7px 14px;margin-bottom:22px;transition:border-color .3s;}
+.feature-card:hover .feature-ats-badge{border-color:var(--gold);}
+.feature-ats-text{font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.18em;font-weight:400;color:var(--gold);text-transform:uppercase;}
+.feature-ats-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.6;flex-shrink:0;}
+.feature-title{font-family:'Amiri',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.4;}
+.feature-text{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:300;line-height:1.95;color:var(--text-muted);}
+
+/* ─── ABOUT ─── */
+.about{padding:110px 56px;background:var(--bg);transition:background .5s;}
+.about-inner{max-width:860px;margin:0 auto;text-align:center;}
+.about-title{font-family:'Amiri',serif;font-size:clamp(36px,5vw,68px);font-weight:700;line-height:1.2;color:var(--text);margin-bottom:36px;white-space:nowrap;}
+.about-line{width:56px;height:1px;background:var(--gold);opacity:.55;margin:0 auto 36px;}
+.about-text{font-family:'Tajawal',sans-serif;font-size:16px;font-weight:400;line-height:2.1;color:var(--text-muted);margin-bottom:16px;max-width:680px;margin-left:auto;margin-right:auto;}
+.about-text strong{font-weight:700;color:var(--text);}
+.about-badge{display:inline-flex;align-items:center;gap:12px;border:1px solid var(--border);padding:14px 24px;margin-top:32px;transition:border-color .3s;}
+.about-badge:hover{border-color:var(--gold);}
+.about-badge-icon{width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .3s;}
+.about-badge:hover .about-badge-icon{border-color:var(--gold);}
+.about-badge-text{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:500;color:var(--text);}
+.about-badge-sub{font-family:'Josefin Sans',sans-serif;font-size:8px;letter-spacing:.22em;font-weight:300;color:var(--gold);text-transform:uppercase;display:block;margin-top:3px;}
+
+/* ─── PORTFOLIO ─── */
+.portfolio{padding:110px 56px;background:var(--port-bg);transition:background .5s;text-align:right;direction:rtl;}
+.portfolio-label-wrap{display:flex;justify-content:flex-end;}
+.portfolio .section-label-right{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:.5em;font-weight:300;color:var(--port-text);opacity:.35;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:14px;}
+.portfolio .section-label-right::before{content:'';width:32px;height:1px;background:var(--port-text);opacity:.3;}
+.portfolio-title{font-family:'Amiri',serif;font-size:clamp(36px,5.5vw,68px);font-weight:700;line-height:1.15;color:var(--port-text);margin-bottom:14px;transition:color .5s;}
+.portfolio-title em{font-style:italic;opacity:.7;}
+.portfolio-sub{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:300;line-height:1.95;color:var(--port-text);opacity:.5;max-width:500px;margin-bottom:56px;margin-right:0;margin-left:auto;}
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.portfolio-card{aspect-ratio:3/4;background:var(--port-card);position:relative;overflow:hidden;cursor:none;transition:transform .4s cubic-bezier(.22,1,.36,1),background .5s;border:1px solid var(--port-border);}
+.portfolio-card:hover{transform:translateY(-6px);}
+.portfolio-card:nth-child(2){margin-top:40px;}
+.portfolio-card:nth-child(3){margin-top:-40px;}
+.portfolio-card-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;}
+.pm{width:100%;flex:1;border:1px solid var(--port-border);display:flex;flex-direction:column;padding:18px;gap:9px;}
+.ml{height:2px;background:var(--port-mock-line);border-radius:1px;}
+.ml.tk{height:3px;background:var(--port-mock-thick);}
+.ml.ac{background:rgba(201,169,110,.45);width:42%;}
+.mb{height:50px;background:transparent;border-right:2px solid rgba(201,169,110,.35);padding-right:9px;display:flex;flex-direction:column;justify-content:center;gap:5px;}
+.p-card-label{font-family:'Tajawal',sans-serif;font-size:11px;font-weight:400;color:var(--port-text);opacity:.38;margin-top:11px;text-align:center;}
+.p-card-overlay{position:absolute;inset:0;background:rgba(201,169,110,.1);opacity:0;transition:opacity .4s;display:flex;align-items:center;justify-content:center;}
+.portfolio-card:hover .p-card-overlay{opacity:1;}
+.overlay-btn{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;color:var(--port-text);border:1px solid var(--port-border);padding:10px 22px;}
+
+/* ─── CONTACT ─── */
+.contact{padding:120px 56px;text-align:center;}
+.contact-title{font-family:'Amiri',serif;font-size:clamp(24px,3.8vw,52px);font-weight:700;line-height:1.2;color:var(--text);white-space:nowrap;margin-bottom:18px;}
+.contact-text{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:300;line-height:2;color:var(--text-muted);max-width:460px;margin:0 auto 48px;}
+.contact-channels{display:flex;flex-direction:column;gap:12px;max-width:480px;margin:0 auto;}
+.contact-channel{display:flex;align-items:center;gap:16px;padding:17px 24px;border:1px solid var(--border);text-decoration:none;transition:all .3s;position:relative;overflow:hidden;direction:rtl;}
+.contact-channel::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:var(--gold);transform:scaleY(0);transition:transform .3s;}
+.contact-channel:hover{background:var(--surface);}
+.contact-channel:hover::after{transform:scaleY(1);}
+.ch-icon{width:36px;height:36px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text);opacity:.5;flex-shrink:0;transition:border-color .3s,opacity .3s;}
+.contact-channel:hover .ch-icon{border-color:var(--gold);opacity:1;}
+.ch-name{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:500;color:var(--text);display:block;margin-bottom:2px;}
+.ch-handle{font-family:'Josefin Sans',sans-serif;font-size:11px;font-weight:300;letter-spacing:.1em;color:var(--text-muted);direction:ltr;}
+.ch-arrow{color:var(--text);opacity:.28;margin-right:auto;font-size:16px;transition:opacity .3s,transform .3s;}
+.contact-channel:hover .ch-arrow{opacity:.7;transform:translateX(-4px);}
+
+/* ─── FOOTER ─── */
+footer{padding:32px 56px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;direction:rtl;transition:border-color .5s;}
+.footer-logo{font-family:'Amiri',serif;font-size:22px;font-weight:700;color:var(--text);opacity:.32;}
+.footer-copy{font-family:'Tajawal',sans-serif;font-size:12px;font-weight:300;color:var(--text-muted);}
+.footer-en{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:.22em;font-weight:300;color:var(--text);opacity:.18;direction:ltr;}
+
+/* ══════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s cubic-bezier(.22,1,.36,1);
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+
+.modal{
+  background:var(--bg);
+  border:1px solid var(--border);
+  width:100%;max-width:560px;
+  max-height:90vh;overflow-y:auto;
+  position:relative;
+  transform:translateY(28px) scale(.97);
+  transition:transform .45s cubic-bezier(.22,1,.36,1);
+  scrollbar-width:thin;
+  scrollbar-color:var(--gold) transparent;
+}
+.modal::-webkit-scrollbar{width:4px;}
+.modal::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px;}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);}
+
+.modal-header{
+  padding:36px 40px 24px;
+  border-bottom:1px solid var(--border2);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+}
+.modal-header-text{}
+.modal-title{
+  font-family:'Amiri',serif;font-size:28px;font-weight:700;
+  color:var(--text);line-height:1.3;
+}
+.modal-subtitle{
+  font-family:'Tajawal',sans-serif;font-size:13px;font-weight:300;
+  color:var(--text-muted);margin-top:6px;
+}
+.modal-close{
+  width:36px;height:36px;border:1px solid var(--border);background:none;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text);opacity:.5;cursor:none;flex-shrink:0;
+  transition:opacity .3s,border-color .3s;font-size:18px;line-height:1;
+}
+.modal-close:hover{opacity:1;border-color:var(--gold);}
+
+.modal-body{padding:32px 40px 40px;}
+.form-grid{display:flex;flex-direction:column;gap:22px;}
+
+.field-group{display:flex;flex-direction:column;gap:8px;}
+.field-label{
+  font-family:'Tajawal',sans-serif;font-size:13px;font-weight:500;
+  color:var(--text);opacity:.75;
+  display:flex;align-items:center;gap:6px;
+}
+.field-label .req{color:var(--gold);font-size:14px;line-height:1;}
+
+/* base input/select/textarea */
+.field-input,
+.field-select,
+.field-textarea{
+  font-family:'Tajawal',sans-serif;font-size:14px;font-weight:400;
+  color:var(--text);background:var(--input-bg);
+  border:1px solid var(--input-border);
+  padding:13px 16px;
+  width:100%;outline:none;
+  transition:border-color .3s,background .3s;
+  appearance:none;-webkit-appearance:none;
+}
+.field-input::placeholder,.field-textarea::placeholder{color:var(--text-muted);opacity:.6;}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold);}
+.field-textarea{resize:none;height:90px;line-height:1.7;}
+
+/* select custom arrow */
+.select-wrap{position:relative;}
+.select-wrap::after{
+  content:'';position:absolute;
+  left:16px;top:50%;transform:translateY(-50%);
+  width:0;height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:5px solid var(--gold);
+  pointer-events:none;
+}
+.field-select option{background:var(--bg);color:var(--text);}
+
+/* file upload */
+/* submit btn */
+.form-submit{
+  font-family:'Tajawal',sans-serif;font-size:15px;font-weight:500;
+  color:var(--green);background:var(--cream);
+  border:none;padding:16px;width:100%;cursor:none;
+  position:relative;overflow:hidden;
+  transition:color .4s;margin-top:8px;
+}
+.form-submit::before{
+  content:'';position:absolute;inset:0;background:var(--gold);
+  transform:translateY(101%);transition:transform .45s cubic-bezier(.77,0,.175,1);
+}
+.form-submit:hover::before{transform:translateY(0);}
+.form-submit:hover{color:var(--white);}
+.form-submit span{position:relative;z-index:1;}
+
+/* success state */
+.modal-success{
+  padding:56px 40px;text-align:center;
+  display:none;flex-direction:column;align-items:center;gap:18px;
+}
+.modal-success.show{display:flex;}
+.success-icon{
+  width:60px;height:60px;border:1px solid rgba(201,169,110,.4);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.success-title{font-family:'Amiri',serif;font-size:26px;font-weight:700;color:var(--text);}
+.success-text{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:300;line-height:1.9;color:var(--text-muted);max-width:320px;}
+
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:960px){
+  nav{padding:13px 18px;}.nav-center{display:none;}
+  .hero{padding:106px 18px 60px;}
+  .features{padding:68px 18px;}.features-grid{grid-template-columns:1fr;}
+  .about{padding:68px 18px;}
+  .portfolio{padding:68px 18px;}.portfolio-grid{grid-template-columns:1fr;}.portfolio-card:nth-child(n){margin-top:0;}
+  .contact{padding:68px 18px;}.contact-title{white-space:normal;}
+  footer{padding:20px 18px;flex-direction:column;gap:8px;text-align:center;direction:ltr;}
+  .modal-header{padding:28px 24px 18px;}
+  .modal-body{padding:24px 24px 32px;}
+}
+@media(max-width:560px){
+  .hero-logo-ar{font-size:clamp(44px,10vw,72px);}
+  .about-title{white-space:normal;font-size:clamp(32px,8vw,52px);}
+  .contact-title{white-space:normal;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-ar">تَمـكيـن</span>
+    <span class="nav-logo-divider">|</span>
+    <span class="nav-logo-en">TAMKIN</span>
+  </a>
+  <ul class="nav-center">
+    <li><a href="#features">خدماتنا</a></li>
+    <li><a href="#about">لماذا تمكين</a></li>
+    <li><a href="#portfolio">أعمالنا</a></li>
+    <li><a href="#contact">تواصل</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="تبديل المظهر">
+      <div class="toggle-thumb"><span id="themeIcon">🌙</span></div>
+    </button>
+    <a href="#contact" class="nav-cta">ابدأ الآن</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <h1 class="hero-logo-ar">تَمـكيـن</h1>
+  <p class="hero-sub">طريقك للمقابلة الوظيفية يبدأ من هُنا</p>
+  <div class="hero-divider"></div>
+  <p class="hero-desc">نصمم سيرتك الذاتية بذكاء تقني يضمن عبورك لأنظمة الـ ATS وإبراز قوتك المهنية الحقيقية.</p>
+  <button class="hero-btn" id="openModalBtn"><span>احصل على سيرتك الآن</span></button>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span class="marquee-item">متوافق 100% مع ATS</span>
+    <span class="marquee-item">دقة تقنية</span>
+    <span class="marquee-item">مشاريع تخرج وابحاث </span>
+    <span class="marquee-item">خدمات طلابية</span>
+    <span class="marquee-item">تمكين</span>
+    <span class="marquee-item">ATS Optimized</span>
+    <span class="marquee-item">Academic Support</span>
+    <span class="marquee-item">graduation and research projects</span>
+    <span class="marquee-item">متوافق 100% مع ATS</span>
+    <span class="marquee-item">دقة تقنية</span>
+    <span class="marquee-item">مشاريع تخرج وابحاث </span>
+    <span class="marquee-item">خدمات طلابية</span>
+    <span class="marquee-item">تمكين</span>
+    <span class="marquee-item">ATS Optimized</span>
+    <span class="marquee-item">Academic Support</span>
+    <span class="marquee-item">graduation and research projects</span>
+  </div>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<section class="features" id="features">
+  <p class="features-title-en sr">OUR SERVICES</p>
+  <h2 class="features-heading sr d1">خدمــاتنـا المتـخصصـة</h2>
+  <div class="features-grid">
+    <div class="feature-card sr d1">
+      <span class="feature-num">01</span>
+      <div class="feature-ats-badge">
+        <span class="feature-ats-dot"></span>
+        <span class="feature-ats-text">متوافق 100% ATS</span>
+      </div>
+      <h3 class="feature-title">تصميم سيرة ذاتية (ATS)</h3>
+      <p class="feature-text">احترافية ومجهزة لأنظمة الفرز الآلي. نبني سيرتك بدقة تقنية تضمن وصولها للمسؤول المناسب وإبراز إنجازاتك بوضوح.</p>
+    </div>
+    <div class="feature-card sr d2">
+      <span class="feature-num">02</span>
+      <div class="feature-ats-badge">
+        <span class="feature-ats-dot"></span>
+        <span class="feature-ats-text">دقة في الانجاز</span>
+      </div>
+      <h3 class="feature-title">مشاريع تخرج وأبحاث</h3>
+      <p class="feature-text">مساعدة أكاديمية متخصصة للطلاب في إعداد مشاريع التخرج والأبحاث العلمية بمستوى احترافي يرقى لمتطلبات الجامعة.</p>
+    </div>
+    <div class="feature-card sr d3">
+      <span class="feature-num">03</span>
+      <div class="feature-ats-badge">
+        <span class="feature-ats-dot"></span>
+        <span class="feature-ats-text">فهم عميق</span>
+      </div>
+      <h3 class="feature-title">خدمات طلابية</h3>
+      <p class="feature-text">حل واجبات، شرح مفاهيم، وإعداد عروض تقديمية احترافية. دعم شامل للطالب في رحلته الأكاديمية بأسلوب واضح ومنظم.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══ WHY TAMKIN ══ -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <p class="section-label-center sr">Why TAMKIN</p>
+    <h2 class="about-title sr d1">لماذا تمكين؟</h2>
+    <div class="about-line sr d1"></div>
+    <p class="about-text sr d2">المنافسة اليوم مو بس مع البشر " <strong>  حتى الأنظمة الآلية ATS</strong> تحدد مصير سيرتك الذاتية — إما تعبر الفلترة الآلية وتصل إلى المسؤول، أو تُرفض دون أن يراها أحد.</p>
+    <p class="about-text sr d2">لازم تقتنع في <strong>تَمـكيـن  </strong>ما نعدل ملفات؛ إحنا نصمم استراتيجية لقبولك</p>
+    <p class="about-text sr d2">كتب خبراتك بلغة يفهمها الخبراء وتجتازها الخوارزميات، عشان نضمن <strong>اســمك</strong> يكون دايمًا في أعلى قائمة الترشيحات</p>
+    <div class="sr d3" style="display:flex;justify-content:center;">
+      <div class="about-badge">
+        <div class="about-badge-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+            <path d="M12 2L21 7V13C21 18 12 22 12 22C12 22 3 18 3 13V7Z"/>
+            <polyline points="9,12 11,14 15,10"/>
+          </svg>
+        </div>
+        <div>
+          <span class="about-badge-text">معتمد ومتوافق مع ATS</span>
+          <span class="about-badge-sub">ATS Compatible &amp; Verified</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══ PORTFOLIO ══ -->
+<section class="portfolio" id="portfolio">
+  <div class="portfolio-label-wrap">
+    <p class="section-label-right sr">Our Work</p>
+  </div>
+  <h2 class="portfolio-title sr d1"><em>نتـائج</em> مُثبـتة.</h2>
+  <p class="portfolio-sub sr d2">تصاميم نظيفة واحترافية ساعدت أصحاب الطلبات على التميز والوصول لمقابلاتهم المستهدفة.</p>
+  <div class="portfolio-grid">
+    <div class="portfolio-card sr d1">
+      <div class="portfolio-card-inner">
+        <div class="pm">
+          <div class="ml tk" style="width:55%;"></div><div class="ml ac"></div>
+          <div style="height:1px;background:var(--port-border);margin:5px 0;"></div>
+          <div class="mb"><div class="ml" style="width:70%;height:1px;"></div><div class="ml" style="width:85%;height:1px;"></div></div>
+          <div class="mb"><div class="ml" style="width:62%;height:1px;"></div><div class="ml" style="width:78%;height:1px;"></div></div>
+          <div style="height:1px;background:var(--port-border);margin:5px 0;"></div>
+          <div class="ml ac"></div><div class="ml" style="width:80%;"></div><div class="ml" style="width:65%;"></div>
+        </div>
+        <span class="p-card-label">سيرة ذاتية — ATS Optimized</span>
+      </div>
+      <div class="p-card-overlay"><span class="overlay-btn">عرض النموذج</span></div>
+    </div>
+    <div class="portfolio-card sr d2">
+      <div class="portfolio-card-inner">
+        <div class="pm">
+          <div style="display:flex;gap:9px;margin-bottom:9px;">
+            <div style="width:42px;height:42px;border-radius:50%;background:var(--port-border);border:1px solid var(--port-border);flex-shrink:0;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px;">
+              <div class="ml tk" style="width:50%;"></div><div class="ml ac" style="width:32%;"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:5px;margin:6px 0;">
+            <div style="flex:1;height:25px;background:var(--port-border);border:1px solid var(--port-border);"></div>
+            <div style="flex:1;height:25px;background:var(--port-border);border:1px solid var(--port-border);"></div>
+          </div>
+          <div class="ml ac"></div>
+          <div class="mb"><div class="ml" style="width:75%;height:1px;"></div><div class="ml" style="width:90%;height:1px;"></div></div>
+          <div class="mb"><div class="ml" style="width:60%;height:1px;"></div><div class="ml" style="width:80%;height:1px;"></div></div>
+        </div>
+        <span class="p-card-label">مشروع تخرج — Academic</span>
+      </div>
+      <div class="p-card-overlay"><span class="overlay-btn">عرض النموذج</span></div>
+    </div>
+    <div class="portfolio-card sr d3">
+      <div class="portfolio-card-inner">
+        <div class="pm">
+          <div class="ml tk" style="width:60%;"></div><div class="ml ac"></div>
+          <div style="height:1px;background:var(--port-border);margin:5px 0;"></div>
+          <div class="ml ac" style="margin-bottom:5px;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
+            <div style="height:17px;background:var(--port-border);border:1px solid var(--port-border);"></div>
+            <div style="height:17px;background:var(--port-border);border:1px solid var(--port-border);"></div>
+            <div style="height:17px;background:var(--port-border);border:1px solid var(--port-border);"></div>
+            <div style="height:17px;background:var(--port-border);border:1px solid var(--port-border);"></div>
+          </div>
+          <div class="mb"><div class="ml" style="width:80%;height:1px;"></div><div class="ml" style="width:65%;height:1px;"></div></div>
+          <div class="ml" style="width:70%;"></div>
+        </div>
+        <span class="p-card-label">عرض تقديمي — Presentation</span>
+      </div>
+      <div class="p-card-overlay"><span class="overlay-btn">عرض النموذج</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="contact" id="contact">
+  <p class="section-label-center sr">Get In Touch</p>
+  <h2 class="contact-title sr d1">مستعد لخطوتك المهنية القادمة؟</h2>
+  <p class="contact-text sr d2">ارسل لنا رسالة لنبدأ العمل على طلبك</p>
+  <div class="contact-channels sr d3">
+    <a href="https://instagram.com/tamkin.service" target="_blank" class="contact-channel">
+      <div class="ch-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+      </div>
+      <div><span class="ch-name">إنستقرام</span><span class="ch-handle">tamkin.service</span></div>
+      <span class="ch-arrow">←</span>
+    </a>
+    <a href="https://x.com/tamkin_service" target="_blank" class="contact-channel">
+      <div class="ch-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </div>
+      <div><span class="ch-name"> X</span><span class="ch-handle">tamkin_service</span></div>
+      <span class="ch-arrow">←</span>
+    </a>
+    <a href="#" class="contact-channel" style="opacity:.5;pointer-events:none;">
+      <div class="ch-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div><span class="ch-name">البريد الإلكتروني</span><span class="ch-handle">tamkin.service1@gmail.com</span></div>
+      <span class="ch-arrow">←</span>
+    </a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <span class="footer-logo">تمكين</span>
+  <span class="footer-copy">© ٢٠٢٥ تمكين. جميع الحقوق محفوظة.</span>
+  <span class="footer-en">TAMKIN</span>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modalBox">
+
+    <!-- FORM VIEW -->
+    <div id="formView">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <h2 class="modal-title" id="modalTitle">احصل على سيرتك الآن</h2>
+          <p class="modal-subtitle">أرسل تفاصيلك وسنتواصل معك في أقرب وقت</p>
+        </div>
+        <button class="modal-close" id="closeModal" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Replace YOUR_FORM_ID with your Formspree ID when ready -->
+        <form class="form-grid" id="tamkinForm" action="https://formspree.io/f/mjgawzpy" method="POST">
+
+          <!-- Full Name -->
+          <div class="field-group">
+            <label class="field-label" for="fullName">
+              الاسم الثلاثي <span class="req">*</span>
+            </label>
+            <input class="field-input" type="text" id="fullName" name="full_name"
+              placeholder="مثال: محمد عبدالله الأحمد" required/>
+          </div>
+
+          <!-- Contact Number -->
+          <div class="field-group">
+            <label class="field-label" for="phone">
+              رقم التواصل <span class="req">*</span>
+            </label>
+            <input class="field-input" type="tel" id="phone" name="phone"
+              placeholder="+966 5X XXX XXXX" required dir="ltr" style="text-align:right;"/>
+          </div>
+
+          <!-- Major -->
+          <div class="field-group">
+            <label class="field-label" for="major">
+              التخصص الجامعي <span class="req">*</span>
+            </label>
+            <input class="field-input" type="text" id="major" name="major"
+              placeholder="مثال: هندسة البرمجيات، إدارة أعمال..." required/>
+          </div>
+
+          <!-- Service Type -->
+          <div class="field-group">
+            <label class="field-label" for="serviceType">
+              نوع الخدمة <span class="req">*</span>
+            </label>
+            <div class="select-wrap">
+              <select class="field-select" id="serviceType" name="service_type" required>
+                <option value="" disabled selected>— اختر الخدمة المطلوبة —</option>
+                <option value="resume">تصميم سيرة ذاتية (ATS)</option>
+                <option value="graduation">مشاريع تخرج وأبحاث</option>
+                <option value="student">خدمات طلابية</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Resume Link -->
+          <div class="field-group">
+            <label class="field-label" for="resumeLink">
+              رابط مسودة السيرة الذاتية (إن وجد)
+            </label>
+            <input class="field-input" type="url" id="resumeLink" name="resume_link"
+              placeholder="رابط Google Drive أو Dropbox" dir="ltr" style="text-align:right;"/>
+          </div>
+
+          <!-- WhatsApp note -->
+          <p style="font-family:'Tajawal',sans-serif;font-size:12px;font-weight:300;line-height:1.85;color:var(--text-muted);border-right:2px solid rgba(201,169,110,.45);padding-right:12px;margin-top:-4px;">
+            ملاحظة: يمكنك أيضاً إرسال ملفاتك مباشرة عبر الواتساب بعد تقديم الطلب.
+          </p>
+
+          <!-- Submit -->
+          <button type="submit" class="form-submit">
+            <span>إرسال الطلب ✦ Submit</span>
+          </button>
+
+        </form>
+      </div>
+    </div><!-- /formView -->
+
+    <!-- SUCCESS VIEW -->
+    <div class="modal-success" id="successView">
+      <div class="success-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+          <path d="M12 2L21 7V13C21 18 12 22 12 22C12 22 3 18 3 13V7Z"/>
+          <polyline points="9,12 11,14 15,10"/>
+        </svg>
+      </div>
+      <h3 class="success-title">تم إرسال طلبك بنجاح!</h3>
+      <p class="success-text">شكراً لك، سنراجع طلبك ونتواصل معك في أقرب وقت ممكن.</p>
+      <button class="form-submit" id="closeSuccess" style="max-width:200px;margin-top:8px;">
+        <span>إغلاق</span>
+      </button>
+    </div>
+
+  </div><!-- /modal -->
+</div><!-- /modal-overlay -->
+
+
+<script>
+/* ── CURSOR ── */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function tick(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
+document.querySelectorAll('a,button,label[for]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='16px';cur.style.height='16px';ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';ring.style.width='36px';ring.style.height='36px';});
+});
+
+/* ── THEME TOGGLE ── */
+const html=document.documentElement;
+const toggleBtn=document.getElementById('themeToggle');
+const themeIcon=document.getElementById('themeIcon');
+let isDark=true;
+toggleBtn.addEventListener('click',()=>{
+  isDark=!isDark;
+  html.setAttribute('data-theme',isDark?'dark':'light');
+  themeIcon.textContent=isDark?'🌙':'☀️';
+});
+
+/* ── SCROLL REVEAL ── */
+const srEls=document.querySelectorAll('.sr');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+srEls.forEach(el=>obs.observe(el));
+
+/* ── MODAL ── */
+const overlay=document.getElementById('modalOverlay');
+const openBtn=document.getElementById('openModalBtn');
+const closeBtn=document.getElementById('closeModal');
+const closeSuccessBtn=document.getElementById('closeSuccess');
+const formView=document.getElementById('formView');
+const successView=document.getElementById('successView');
+
+function openModal(){
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+openBtn.addEventListener('click',openModal);
+closeBtn.addEventListener('click',closeModal);
+closeSuccessBtn.addEventListener('click',closeModal);
+
+// close on backdrop click
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+
+// close on Escape
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeModal();});
+
+/* ── MODAL CLOSE ── */
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+openBtn.addEventListener('click',openModal);
+closeBtn.addEventListener('click',closeModal);
+closeSuccessBtn.addEventListener('click',closeModal);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeModal();});
+</script>
+</body>
+</html>
